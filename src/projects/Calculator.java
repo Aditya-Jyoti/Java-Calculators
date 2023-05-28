@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Calculator {
-    public static String runCalculator() {
+    public static String main() {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter expression: ");
         List<String> expression = new ArrayList<String>(Arrays.asList(scanner.nextLine().split(" ")));

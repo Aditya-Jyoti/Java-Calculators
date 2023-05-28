@@ -3,6 +3,7 @@ import java.util.Arrays;
 import org.apache.commons.cli.*;
 
 import projects.Calculator;
+import projects.CalculatorGui;
 
 public class Main {
     public static void main(String[] args) throws ParseException {
@@ -27,9 +28,10 @@ public class Main {
             formatter.printHelp("help", options);
         }
 
-        if (Arrays.asList("calculator", "calc").contains(project)) {
-            System.out.println("Result: " + Calculator.runCalculator());
+        if (Arrays.asList("calculator", "calc").contains(project.toLowerCase())) {
+            System.out.println("Result: " + Calculator.main());
+        } else if (Arrays.asList("gui", "calc-gui", "calcgui", "calculator-gui").contains(project.toLowerCase())) {
+            CalculatorGui.main();
         }
-
     }
 }
