@@ -1,4 +1,4 @@
-package com.toady.projects;
+package projects;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,3 +66,4 @@ public class Calculator {
         return expression.get(0);
     }
 }
+
