@@ -2,14 +2,25 @@ package projects;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 public class CalculatorGui {
+    private static String lhsNumber = "0";
+    private static String rhsNumber = "0";
+    private static String operator = "";
+    private static String savedNumberString = "";
+    private static HashMap<String, Runnable> operationFunctions = new HashMap<String, Runnable>();
+
     static class Button {
         public JButton btn;
         public String type;
@@ -20,7 +31,28 @@ public class CalculatorGui {
         }
     }
 
-    public static void main() {
+    public static void startGui() {
+        operationFunctions.put("+", new Runnable() {
+            public void run() {
+                lhsNumber = Double.toString(Double.parseDouble(lhsNumber) + Double.parseDouble(rhsNumber));
+            }
+        });
+        operationFunctions.put("-", new Runnable() {
+            public void run() {
+                lhsNumber = Double.toString(Double.parseDouble(lhsNumber) - Double.parseDouble(rhsNumber));
+            }
+        });
+        operationFunctions.put("÷", new Runnable() {
+            public void run() {
+                lhsNumber = Double.toString(Double.parseDouble(lhsNumber) / Double.parseDouble(rhsNumber));
+            }
+        });
+        operationFunctions.put("x", new Runnable() {
+            public void run() {
+                lhsNumber = Double.toString(Double.parseDouble(lhsNumber) * Double.parseDouble(rhsNumber));
+            }
+        });
+
         final int WIDTH = 410;
         final int HEIGHT = 600;
 
@@ -33,14 +65,27 @@ public class CalculatorGui {
         final Color equalsHoverButton = new Color(86, 98, 120);
 
         final Font numberFont = new Font("assets/Roboto.ttf", Font.BOLD, 20);
+        final Font numberLabelFont = new Font("assets/Roboto.ttf", Font.BOLD, 60);
 
         JFrame frame = new JFrame("Calculator");
-        frame.setVisible(true);
         frame.setSize(WIDTH, HEIGHT);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setIconImage(new ImageIcon("assets/calculator-logo.png").getImage());
         frame.getContentPane().setBackground(backgroundColor);
+        frame.setLayout(null);
+
+        JLabel numberPanel = new JLabel(lhsNumber + " ", SwingConstants.RIGHT);
+        numberPanel.setBounds(4, 70, 388, 80);
+        numberPanel.setForeground(Color.white);
+        numberPanel.setFont(numberLabelFont);
+        frame.add(numberPanel);
+
+        JLabel savedNumberPanel = new JLabel(savedNumberString + " ", SwingConstants.RIGHT);
+        savedNumberPanel.setBounds(4, 40, 388, 30);
+        savedNumberPanel.setFont(numberFont);
+        savedNumberPanel.setForeground(Color.white);
+        frame.add(savedNumberPanel);
 
         JButton oneBtn = new JButton("1");
         JButton twoBtn = new JButton("2");
@@ -57,7 +102,7 @@ public class CalculatorGui {
         JButton percentBtn = new JButton("%");
         JButton clearExpressionBtn = new JButton("CE");
         JButton clearAllBtn = new JButton("C");
-        JButton backspaceBtn = new JButton("⌫");
+        JButton backspaceBtn = new JButton("BS");
 
         JButton divideOneByXBtn = new JButton("1/x");
         JButton raiseXByTwoBtn = new JButton("x²");
@@ -126,6 +171,19 @@ public class CalculatorGui {
                         }
                     });
 
+                    btn.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent event) {
+                            if (operator == "") {
+                                lhsNumber = lhsNumber == "0" ? btn.getText() : lhsNumber + btn.getText();
+                                numberPanel.setText(lhsNumber.strip() + " ");
+                            } else {
+                                rhsNumber = rhsNumber == "0" ? btn.getText() : rhsNumber + btn.getText();
+                                numberPanel.setText(rhsNumber.strip() + " ");
+                            }
+                        }
+                    });
+
                 } else if (btnClass.type == "exp") {
 
                     btn.setBackground(operationButtons);
@@ -136,6 +194,33 @@ public class CalculatorGui {
 
                         public void mouseExited(MouseEvent event) {
                             btn.setBackground(operationButtons);
+                        }
+                    });
+                    btn.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent event) {
+                            if (btn.getText() == "1/x") {
+                                lhsNumber = Double.toString(1.0 / Double.parseDouble(lhsNumber));
+                                numberPanel.setText(lhsNumber + " ");
+
+                            } else if (btn.getText() == "x²") {
+                                lhsNumber = Double.toString(Math.pow(Double.parseDouble(lhsNumber), 2));
+                                numberPanel.setText(lhsNumber + " ");
+
+                            } else if (btn.getText() == "√x") {
+                                lhsNumber = Double.toString(Math.sqrt(Double.parseDouble(lhsNumber)));
+                                numberPanel.setText(lhsNumber + " ");
+
+                            } else if (btn.getText() == "%") {
+
+                            } else if (btn.getText() == "BS") {
+
+                            } else if (lhsNumber != "0") {
+                                operator = btn.getText();
+                                savedNumberString = lhsNumber + " " + operator + " ";
+                                savedNumberPanel.setText(savedNumberString);
+                                numberPanel.setText(rhsNumber);
+                            }
                         }
                     });
 
@@ -152,12 +237,28 @@ public class CalculatorGui {
                         }
                     });
 
+                    btn.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent event) {
+                            if (lhsNumber != "0" && rhsNumber != "0") {
+                                operationFunctions.get(operator).run();
+                                savedNumberString = "";
+                                savedNumberPanel.setText(savedNumberString);
+                                rhsNumber = "0";
+                                operator = "";
+                                numberPanel.setText(lhsNumber);
+                            }
+                        }
+                    });
+
                 }
 
                 frame.add(btn);
 
             }
         }
+
+        frame.setVisible(true);
 
     }
 }

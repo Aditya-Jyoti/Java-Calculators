@@ -31,7 +31,7 @@ public class Main {
         if (Arrays.asList("calculator", "calc").contains(project.toLowerCase())) {
             System.out.println("Result: " + Calculator.main());
         } else if (Arrays.asList("gui", "calc-gui", "calcgui", "calculator-gui").contains(project.toLowerCase())) {
-            CalculatorGui.main();
+            CalculatorGui.startGui();
         }
     }
 }
