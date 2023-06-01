@@ -18,7 +18,6 @@ public class CalculatorGui {
     private static String lhsNumber = "0";
     private static String rhsNumber = "0";
     private static String operator = "";
-    private static String savedNumberString = "";
     private static HashMap<String, Runnable> operationFunctions = new HashMap<String, Runnable>();
 
     static class Button {
@@ -81,7 +80,7 @@ public class CalculatorGui {
         numberPanel.setFont(numberLabelFont);
         frame.add(numberPanel);
 
-        JLabel savedNumberPanel = new JLabel(savedNumberString + " ", SwingConstants.RIGHT);
+        JLabel savedNumberPanel = new JLabel("", SwingConstants.RIGHT);
         savedNumberPanel.setBounds(4, 40, 388, 30);
         savedNumberPanel.setFont(numberFont);
         savedNumberPanel.setForeground(Color.white);
@@ -174,9 +173,30 @@ public class CalculatorGui {
                     btn.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent event) {
-                            if (operator == "") {
+                            if (btn.getText() == ".") {
+                                if (savedNumberPanel.getText() != "") {
+                                    rhsNumber = rhsNumber + ".";
+                                    numberPanel.setText(rhsNumber);
+                                } else {
+                                    lhsNumber = lhsNumber + ".";
+                                    numberPanel.setText(lhsNumber);
+                                }
+
+                            } else if (btn.getText() == "+/-") {
+                                if (savedNumberPanel.getText() != "") {
+                                    rhsNumber = rhsNumber.startsWith("-") ? rhsNumber.substring(1, rhsNumber.length())
+                                            : "-" + rhsNumber;
+                                    numberPanel.setText(rhsNumber);
+                                } else {
+                                    lhsNumber = lhsNumber.startsWith("-") ? lhsNumber.substring(1, lhsNumber.length())
+                                            : "-" + lhsNumber;
+                                    numberPanel.setText(lhsNumber);
+                                }
+
+                            } else if (operator == "") {
                                 lhsNumber = lhsNumber == "0" ? btn.getText() : lhsNumber + btn.getText();
                                 numberPanel.setText(lhsNumber.strip() + " ");
+
                             } else {
                                 rhsNumber = rhsNumber == "0" ? btn.getText() : rhsNumber + btn.getText();
                                 numberPanel.setText(rhsNumber.strip() + " ");
@@ -211,14 +231,42 @@ public class CalculatorGui {
                                 lhsNumber = Double.toString(Math.sqrt(Double.parseDouble(lhsNumber)));
                                 numberPanel.setText(lhsNumber + " ");
 
-                            } else if (btn.getText() == "%") {
-
                             } else if (btn.getText() == "BS") {
+                                if (savedNumberPanel.getText() == "") {
+                                    lhsNumber = lhsNumber.strip().substring(0, lhsNumber.strip().length() - 1);
+                                    numberPanel.setText(lhsNumber + " ");
+                                } else {
+                                    rhsNumber = rhsNumber.strip().substring(0, rhsNumber.strip().length() - 1);
+                                    numberPanel.setText(rhsNumber + " ");
+                                }
+                            } else if (btn.getText() == "C") {
+                                lhsNumber = "0";
+                                rhsNumber = "0";
+                                operator = "";
+                                savedNumberPanel.setText("");
+                                numberPanel.setText(lhsNumber);
+
+                            } else if (btn.getText() == "%") {
+                                if (savedNumberPanel.getText() != "") {
+                                    rhsNumber = Double.toString(Double.parseDouble(rhsNumber) / 100.0);
+                                    numberPanel.setText(rhsNumber);
+                                } else {
+                                    lhsNumber = Double.toString(Double.parseDouble(lhsNumber) / 100.0);
+                                    numberPanel.setText(lhsNumber);
+                                }
+
+                            } else if (btn.getText() == "CE") {
+                                if (savedNumberPanel.getText() != "") {
+                                    savedNumberPanel.setText("");
+                                    lhsNumber = rhsNumber;
+                                    operator = "";
+                                    rhsNumber = "0";
+                                    numberPanel.setText(lhsNumber);
+                                }
 
                             } else if (lhsNumber != "0") {
                                 operator = btn.getText();
-                                savedNumberString = lhsNumber + " " + operator + " ";
-                                savedNumberPanel.setText(savedNumberString);
+                                savedNumberPanel.setText(lhsNumber + " " + operator + " ");
                                 numberPanel.setText(rhsNumber);
                             }
                         }
@@ -242,8 +290,7 @@ public class CalculatorGui {
                         public void actionPerformed(ActionEvent event) {
                             if (lhsNumber != "0" && rhsNumber != "0") {
                                 operationFunctions.get(operator).run();
-                                savedNumberString = "";
-                                savedNumberPanel.setText(savedNumberString);
+                                savedNumberPanel.setText("");
                                 rhsNumber = "0";
                                 operator = "";
                                 numberPanel.setText(lhsNumber);
