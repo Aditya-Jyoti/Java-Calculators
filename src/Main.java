@@ -2,8 +2,8 @@ import java.util.Arrays;
 
 import org.apache.commons.cli.*;
 
-import projects.Calculator;
-import projects.CalculatorGui;
+import Calculators.Calculator;
+import Calculators.CalculatorGui;
 
 public class Main {
     public static void main(String[] args) throws ParseException {

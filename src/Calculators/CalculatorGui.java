@@ -1,4 +1,4 @@
-package projects;
+package Calculators;
 
 import java.awt.Color;
 import java.awt.Font;

@@ -1,4 +1,4 @@
-package projects;
+package Calculators;
 
 import java.util.ArrayList;
 import java.util.Arrays;
